@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI SOC Copilot - Tier-1 Analyst Utility</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0f3ff',
+                            100: '#e0e7ff',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                            900: '#1e1b4b',
+                        },
+                        slate: {
+                            850: '#0f172a'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'Fira Code', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts: Inter & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-slate-50 text-slate-900 font-sans min-h-screen flex flex-col antialiased selection:bg-brand-500 selection:text-white">
+
+    <!-- Top Navigation Bar -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-7xl mx-auto px-6 py-3.5 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="p-2.5 bg-brand-600 text-white rounded-xl shadow-md shadow-brand-500/20 flex items-center justify-center">
+                    <i data-lucide="shield-alert" class="w-5 h-5 stroke-[2.2]"></i>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <h1 class="font-bold text-base tracking-tight text-slate-900">SOC COPILOT</h1>
+                        <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-brand-50 text-brand-700 border border-brand-200 font-mono">v2.4 PRO</span>
+                    </div>
+                    <p class="text-xs text-slate-500">Tier-1 Operational Analyst Assistant</p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <div class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-medium">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    n8n Webhook: Active
+                </div>
+                <div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 text-xs font-semibold font-mono border border-slate-200">
+                    <i data-lucide="cpu" class="w-3.5 h-3.5 text-brand-600"></i>
+                    GPT-4o Engine
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Workspace -->
+    <main class="max-w-7xl mx-auto px-6 py-8 flex-1 w-full grid grid-cols-1 lg:grid-cols-12 gap-8">
+        
+        <!-- Left Panel: Ticket Submission Form (8 cols) -->
+        <div class="lg:col-span-8 space-y-6">
+            
+            <!-- Banner -->
+            <div class="bg-gradient-to-r from-brand-900 via-slate-900 to-brand-900 text-white p-6 rounded-2xl shadow-lg relative overflow-hidden">
+                <div class="relative z-10 max-w-xl">
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-brand-500/20 text-brand-200 border border-brand-400/30 mb-3">
+                        <i data-lucide="sparkles" class="w-3.5 h-3.5 text-brand-300"></i> AI Threat Intelligence & Triage
+                    </span>
+                    <h2 class="text-2xl font-bold tracking-tight mb-2">Central Operational Utility</h2>
+                    <p class="text-slate-300 text-xs leading-relaxed">
+                        Input raw SIEM logs or threat alerts below. Our automated n8n pipeline executes IP enrichment, severity routing, MITRE ATT&CK mapping, and emails structured remediation steps to analysts.
+                    </p>
+                </div>
+                <i data-lucide="bot" class="w-48 h-48 text-white/5 absolute -right-6 -bottom-10 pointer-events-none"></i>
+            </div>
+
+            <!-- Form Card -->
+            <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+                <form id="copilotForm" class="space-y-5">
+                    
+                    <!-- Row 1: Analyst Email & Category -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="analystEmail" class="block text-xs font-semibold text-slate-700 mb-1.5 flex items-center gap-1.5">
+                                <i data-lucide="mail" class="w-3.5 h-3.5 text-brand-600"></i> Analyst Email Address
+                            </label>
+                            <input 
+                                type="email" 
+                                id="analystEmail" 
+                                required 
+                                placeholder="analyst.tier1@soc-team.internal" 
+                                class="w-full bg-slate-50 border border-slate-200 text-slate-900 rounded-xl px-3.5 py-2.5 focus:bg-white focus:outline-none focus:border-brand-600 focus:ring-1 focus:ring-brand-600 transition text-xs font-mono"
+                            >
+                        </div>
+
+                        <div>
+                            <label for="alertCategory" class="block text-xs font-semibold text-slate-700 mb-1.5 flex items-center gap-1.5">
+                                <i data-lucide="layers" class="w-3.5 h-3.5 text-brand-600"></i> Threat Event Category
+                            </label>
+                            <select 
+                                id="alertCategory" 
+                                class="w-full bg-slate-50 border border-slate-200 text-slate-900 rounded-xl px-3.5 py-2.5 focus:bg-white focus:outline-none focus:border-brand-600 transition text-xs font-mono"
+                            >
+                                <option value="Ransomware / Critical Malware Execution">Ransomware / Critical Malware Execution</option>
+                                <option value="Authentication Threat (Brute-Force / Credential Stuffing)">Authentication Threat (Brute-Force / Credential Stuffing)</option>
+                                <option value="Endpoint Anomaly (Suspicious PowerShell Command)">Endpoint Anomaly (Suspicious PowerShell Command)</option>
+                                <option value="Network Exfiltration / Beaconing C2">Network Exfiltration / Beaconing C2</option>
+                                <option value="Cloud Security (Unusual IAM Role Escalation)">Cloud Security (Unusual IAM Role Escalation)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Row 2: Ticket ID & Source IP -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="alertId" class="block text-xs font-semibold text-slate-700 mb-1.5 flex items-center gap-1.5">
+                                <i data-lucide="hash" class="w-3.5 h-3.5 text-brand-600"></i> SIEM Ticket ID
+                            </label>
+                            <input 
+                                type="text" 
+                                id="alertId" 
+                                required 
+                                placeholder="INC-2026-99012" 
+                                class="w-full bg-slate-50 border border-slate-200 text-slate-900 rounded-xl px-3.5 py-2.5 focus:bg-white focus:outline-none focus:border-brand-600 transition text-xs font-mono"
+                            >
+                        </div>
+
+                        <div>
+                            <label for="sourceIp" class="block text-xs font-semibold text-slate-700 mb-1.5 flex items-center gap-1.5">
+                                <i data-lucide="globe" class="w-3.5 h-3.5 text-brand-600"></i> Suspected Source IP / IOC
+                            </label>
+                            <input 
+                                type="text" 
+                                id="sourceIp" 
+                                placeholder="185.220.101.5" 
+                                class="w-full bg-slate-50 border border-slate-200 text-slate-900 rounded-xl px-3.5 py-2.5 focus:bg-white focus:outline-none focus:border-brand-600 transition text-xs font-mono"
+                            >
+                        </div>
+                    </div>
+
+                    <!-- Row 3: Raw Logs Payload -->
+                    <div>
+                        <label for="rawLogPayload" class="block text-xs font-semibold text-slate-700 mb-1.5 flex items-center justify-between">
+                            <span class="flex items-center gap-1.5">
+                                <i data-lucide="terminal" class="w-3.5 h-3.5 text-brand-600"></i> Raw Security Telemetry Logs
+                            </span>
+                            <span class="text-[11px] text-slate-400 font-normal">Syslog / JSON / EDR Output</span>
+                        </label>
+                        <textarea 
+                            id="rawLogPayload" 
+                            rows="6" 
+                            required
+                            placeholder='{"event_id": 4625, "user": "administrator", "src_ip": "185.220.101.5", "command": "powershell.exe -e QmFzaDY0RW5jb2RlZENvbW1hbmQ="}' 
+                            class="w-full bg-slate-900 border border-slate-800 text-slate-200 font-mono text-xs rounded-xl p-4 focus:outline-none focus:ring-1 focus:ring-brand-500"
+                        ></textarea>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button 
+                        type="submit" 
+                        id="submitBtn" 
+                        class="w-full py-3.5 px-6 rounded-xl font-bold text-white bg-brand-600 hover:bg-brand-700 active:bg-brand-900 transition-all shadow-md shadow-brand-500/20 flex items-center justify-center gap-2.5 text-sm"
+                    >
+                        <span id="btnText" class="flex items-center gap-2">
+                            <i data-lucide="play" class="w-4 h-4 fill-white"></i>
+                            Trigger Automated SOC Triage Pipeline
+                        </span>
+                        <span id="btnSpinner" class="hidden flex items-center gap-2">
+                            <i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i>
+                            Analyzing Logs & Executing n8n Workflow...
+                        </span>
+                    </button>
+                </form>
+
+                <!-- Status Banner -->
+                <div id="statusAlert" class="hidden mt-5 p-4 rounded-xl border text-xs flex items-start gap-3">
+                    <i id="statusIcon" class="w-5 h-5 mt-0.5 shrink-0"></i>
+                    <div id="statusText" class="space-y-1"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Panel: Pipeline Architecture & Live Feeds (4 cols) -->
+        <div class="lg:col-span-4 space-y-6">
+            
+            <!-- n8n Workflow Path Overview -->
+            <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm space-y-4">
+                <h3 class="font-bold text-slate-900 text-xs tracking-wider uppercase flex items-center justify-between">
+                    <span>n8n Pipeline Architecture</span>
+                    <i data-lucide="workflow" class="w-4 h-4 text-brand-600"></i>
+                </h3>
+
+                <div class="space-y-3 font-mono text-xs">
+                    <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl flex items-center gap-3">
+                        <span class="w-6 h-6 rounded-lg bg-brand-100 text-brand-700 font-bold text-[11px] flex items-center justify-center">1</span>
+                        <div>
+                            <p class="font-bold text-slate-800">Webhook Trigger</p>
+                            <p class="text-[10px] text-slate-500">Receives JSON alert payload</p>
+                        </div>
+                    </div>
+
+                    <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl flex items-center gap-3">
+                        <span class="w-6 h-6 rounded-lg bg-amber-100 text-amber-800 font-bold text-[11px] flex items-center justify-center">2</span>
+                        <div>
+                            <p class="font-bold text-slate-800">Payload Guard (IF Node)</p>
+                            <p class="text-[10px] text-slate-500">Filters empty or invalid requests</p>
+                        </div>
+                    </div>
+
+                    <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl flex items-center gap-3">
+                        <span class="w-6 h-6 rounded-lg bg-blue-100 text-blue-800 font-bold text-[11px] flex items-center justify-center">3</span>
+                        <div>
+                            <p class="font-bold text-slate-800">Threat Intel Enrichment</p>
+                            <p class="text-[10px] text-slate-500">Retrieves IP Geo & ISP data</p>
+                        </div>
+                    </div>
+
+                    <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl flex items-center gap-3">
+                        <span class="w-6 h-6 rounded-lg bg-purple-100 text-purple-800 font-bold text-[11px] flex items-center justify-center">4</span>
+                        <div>
+                            <p class="font-bold text-slate-800">Severity Router & AI Analysis</p>
+                            <p class="text-[10px] text-slate-500">Generates MITRE ATT&CK report</p>
+                        </div>
+                    </div>
+
+                    <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl flex items-center gap-3">
+                        <span class="w-6 h-6 rounded-lg bg-emerald-100 text-emerald-800 font-bold text-[11px] flex items-center justify-center">5</span>
+                        <div>
+                            <p class="font-bold text-slate-800">Gmail Analyst Dispatch</p>
+                            <p class="text-[10px] text-slate-500">Delivers HTML dossier via Gmail</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Operational Metrics Card -->
+            <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm space-y-3">
+                <h3 class="font-bold text-slate-900 text-xs tracking-wider uppercase">System Performance</h3>
+                <div class="grid grid-cols-2 gap-3 text-center">
+                    <div class="p-3 rounded-xl bg-slate-50 border border-slate-100">
+                        <p class="text-[10px] text-slate-500 font-medium">Avg Triage Speed</p>
+                        <p class="text-lg font-bold text-brand-600 mt-0.5">1.2 sec</p>
+                    </div>
+                    <div class="p-3 rounded-xl bg-slate-50 border border-slate-100">
+                        <p class="text-[10px] text-slate-500 font-medium">Auto Routing</p>
+                        <p class="text-lg font-bold text-emerald-600 mt-0.5">100%</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-500">
+        <p>© 2026 AI SOC Copilot - Tier-1 Analyst Central Utility. Powered by n8n & OpenAI.</p>
+    </footer>
+
+    <!-- Interactive JS Script -->
+    <script>
+        lucide.createIcons();
+
+        // Hardcoded n8n Webhook URL Variable
+        const N8N_WEBHOOK_URL = 'https://fartechzeen.app.n8n.cloud/webhook-test/soc-copilot-triage';
+
+        const copilotForm = document.getElementById('copilotForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const btnText = document.getElementById('btnText');
+        const btnSpinner = document.getElementById('btnSpinner');
+        const statusAlert = document.getElementById('statusAlert');
+        const statusIcon = document.getElementById('statusIcon');
+        const statusText = document.getElementById('statusText');
+
+        copilotForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const analystEmail = document.getElementById('analystEmail').value;
+            const alertCategory = document.getElementById('alertCategory').value;
+            const alertId = document.getElementById('alertId').value;
+            const sourceIp = document.getElementById('sourceIp').value;
+            const rawLogPayload = document.getElementById('rawLogPayload').value;
+
+            setLoading(true);
+            hideStatus();
+
+            const payload = {
+                analystEmail,
+                alertCategory,
+                alertId,
+                sourceIp,
+                rawLogPayload,
+                timestamp: new Date().toISOString()
+            };
+
+            try {
+                const response = await fetch(N8N_WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (response.ok) {
+                    showStatus('success', 'SOC Pipeline Execution Completed!', `The ticket <strong>${alertId}</strong> has been processed. Threat dossier and remediation steps have been dispatched via Gmail to <strong>${analystEmail}</strong>.`);
+                    copilotForm.reset();
+                } else {
+                    throw new Error(`Server returned HTTP ${response.status}`);
+                }
+            } catch (err) {
+                showStatus('error', 'Execution Error', `Could not reach n8n Webhook. Details: ${err.message}`);
+            } finally {
+                setLoading(false);
+            }
+        });
+
+        function setLoading(isLoading) {
+            if (isLoading) {
+                submitBtn.disabled = true;
+                submitBtn.classList.add('opacity-75', 'cursor-not-allowed');
+                btnText.classList.add('hidden');
+                btnSpinner.classList.remove('hidden');
+            } else {
+                submitBtn.disabled = false;
+                submitBtn.classList.remove('opacity-75', 'cursor-not-allowed');
+                btnText.classList.remove('hidden');
+                btnSpinner.classList.add('hidden');
+            }
+        }
+
+        function showStatus(type, title, message) {
+            statusAlert.classList.remove('hidden', 'bg-emerald-50', 'border-emerald-200', 'text-emerald-800', 'bg-rose-50', 'border-rose-200', 'text-rose-800');
+
+            if (type === 'success') {
+                statusAlert.classList.add('bg-emerald-50', 'border-emerald-200', 'text-emerald-800');
+                statusIcon.setAttribute('data-lucide', 'check-circle-2');
+                statusIcon.className = 'w-5 h-5 mt-0.5 shrink-0 text-emerald-600';
+            } else {
+                statusAlert.classList.add('bg-rose-50', 'border-rose-200', 'text-rose-800');
+                statusIcon.setAttribute('data-lucide', 'alert-triangle');
+                statusIcon.className = 'w-5 h-5 mt-0.5 shrink-0 text-rose-600';
+            }
+
+            statusText.innerHTML = `<p class="font-bold text-sm">${title}</p><p class="text-xs mt-0.5 opacity-90">${message}</p>`;
+            lucide.createIcons();
+        }
+
+        function hideStatus() {
+            statusAlert.classList.add('hidden');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,13 @@
+Urgent Email:
+Subject:
+🔴 [CRITICAL SOC ALERT] AI Copilot Dossier - {{ $('1. Webhook Trigger').item.json.body.alertId }}
+
+Body:
+<div style="font-family: Arial, sans-serif; max-width: 750px; margin: 0 auto; background-color: #ffffff; color: #0f172a; padding: 24px; border-radius: 12px; border: 2px solid #ef4444;"><div style="border-bottom: 2px solid #ef4444; padding-bottom: 12px; margin-bottom: 20px;"><h1 style="color: #ef4444; margin: 0; font-size: 20px;">🚨 HIGH-SEVERITY THREAT DOSSIER</h1><p style="color: #64748b; font-size: 12px; margin-top: 4px;">Ticket ID: {{ $('1. Webhook Trigger').item.json.body.alertId }} | Status: IMMEDIATE ESCALATION</p></div><div>{{ $json.message.content }}</div></div>
+
+Closing Email:
+Subject:
+🟢 [LOW SEVERITY / ROUTINE] Auto Triage Brief - {{ $('1. Webhook Trigger').item.json.body.alertId }}
+
+Body:
+<div style="font-family: Arial, sans-serif; max-width: 650px; margin: 0 auto; background-color: #f8fafc; color: #0f172a; padding: 24px; border-radius: 12px; border: 1px solid #cbd5e1;"><h2 style="color: #2563eb; margin-top: 0;">ℹ️ Routine Security Event Logged</h2><p><strong>Ticket ID:</strong> {{ $('1. Webhook Trigger').item.json.body.alertId }}</p><p><strong>Category:</strong> {{ $('1. Webhook Trigger').item.json.body.alertCategory }}</p><p><strong>Status:</strong> Low Severity - Marked for Standard Log Retention.</p></div>

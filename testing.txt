@@ -1,0 +1,42 @@
+Test Case 1: High Priority Route (Ransomware / Critical Threat)
+
+Analyst Email: 
+Threat Event Category: Ransomware / Critical Malware Execution
+SIEM Ticket ID: INC-2026-CRIT-991
+Suspected Source IP / IOC: 185.220.101.5
+Raw Security Telemetry Logs:
+{
+  "timestamp": "2026-10-09T15:30:00Z",
+  "hostname": "FINANCE-DB-01",
+  "event_id": 4688,
+  "user": "NT AUTHORITY\\SYSTEM",
+  "process": "vssadmin.exe Delete Shadows /All /Quiet",
+  "parent_process": "powershell.exe -EncodedCommand Q2hhbmdlRmlsZUV4dGVuc2lvbnMgLkV4dG9ydA==",
+  "source_ip": "185.220.101.5",
+  "status": "CRITICAL_RANSOMWARE_ACTIVITY_DETECTED"
+}
+
+Test Case 2: Low Priority Route (Routine Log / Auto-Close)
+
+Analyst Email:
+Threat Event Category: Authentication Threat (Brute-Force / Credential Stuffing)
+SIEM Ticket ID: INC-2026-LOW-102
+Suspected Source IP / IOC: 192.168.1.50
+Raw Security Telemetry Logs:
+{
+  "timestamp": "2026-10-09T15:32:10Z",
+  "hostname": "WEB-SRV-02",
+  "event_id": 4625,
+  "user": "johndoe",
+  "source_ip": "192.168.1.50",
+  "failure_reason": "Unknown user name or bad password",
+  "status": "BLOCKED_BY_FIREWALL"
+}
+
+
+Test Case 3: Invalid / Empty Payload (False Route Test)
+Analyst Email: 
+Threat Event Category: Cloud Security
+SIEM Ticket ID: INC-2026-ERR-000
+Suspected Source IP / IOC: 127.0.0.1
+Raw Security Telemetry Logs: 
